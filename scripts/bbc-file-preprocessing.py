@@ -14,6 +14,7 @@ SENTENCE_SPLIT = '<split1>'
 bbc_tokenized_stories_dir = "./XSum-Dataset/xsum-preprocessed"
 
 finished_files_dir = "./data-convs2s"
+bbc_stories_dir = "./bbc-stories"
 
 # Load JSON File : training, dev and test splits.
 with open("./XSum-Dataset/XSum-TRAINING-DEV-TEST-SPLIT-90-5-5.json") as json_data:
@@ -91,13 +92,17 @@ def write_to_bin(data_type, out_file_rb, out_file_fs):
     article_tokens = article.strip().split()
     split_count = article_tokens.count(SENTENCE_SPLIT)
 
-    article = " ".join(article_tokens[:700 + split_count])
+    article = " ".join(article_tokens[:400 + split_count])
 
-    rb_foutput.write(article+"\n")
-    fs_foutput.write(abstract+"\n")
+    article_file = open(os.path.join(bbc_stories_dir, str(s) + ".article"), "w")
+    abstract_file = open(os.path.join(bbc_stories_dir, str(s) + ".abstract"), "w")
 
-  rb_foutput.close()
-  fs_foutput.close()
+    article_file.write(article)
+    abstract_file.write(abstract)
+
+    article_file.close()
+    abstract_file.close()
+
 
   print "Finished writing file %s, %s\n" %(out_file_rb, out_file_fs)
 
@@ -105,6 +110,7 @@ if __name__ == '__main__':
 
   # Create some new directories
   if not os.path.exists(finished_files_dir): os.makedirs(finished_files_dir)
+  if not os.path.exists(bbc_stories_dir): os.makedirs(bbc_stories_dir)
 
   # Read the tokenized stories, do a little postprocessing then write to text files
   write_to_bin("test", os.path.join(finished_files_dir, "test.document"), os.path.join(finished_files_dir, "test.summary"))
